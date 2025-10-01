@@ -1,0 +1,49 @@
+name: Trigger auto deployment for opentel
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ main ]
+    paths:
+    - '**'
+    - '.github/workflows/opentel-AutoDeployTrigger-b8142e61-302a-43d3-bf98-9d381ac0511b.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:      
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions: 
+      id-token: write #This is required for requesting the OIDC JWT Token
+      contents: read #Required when GH token is used to authenticate with private repo
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.OPENTEL_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.OPENTEL_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.OPENTEL_AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }}
+          _dockerfilePathKey_: _dockerfilePath_
+          _targetLabelKey_: _targetLabel_
+          registryUrl: 
+          registryUsername: ${{ secrets.OPENTEL_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.OPENTEL_REGISTRY_PASSWORD }}
+          containerAppName: opentel
+          resourceGroup: rg-otel
+          imageToBuild: default/[parameters('containerAppName')]:${{ github.sha }}
+          _buildArgumentsKey_: |
+            _buildArgumentsValues_
+
+
