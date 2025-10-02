@@ -68,6 +68,11 @@ kubectl create namespace otel-demo
 helm install opentelemetry-demo open-telemetry/opentelemetry-demo \
   --namespace otel-demo \
   --set frontendProxy.service.type=LoadBalancer
+
+# Or use the Azure-optimized values file
+# helm install opentelemetry-demo open-telemetry/opentelemetry-demo \
+#   --namespace otel-demo \
+#   -f docs/azure-values.yaml
 ```
 
 #### Step 5: Access the Application
@@ -242,12 +247,32 @@ kubectl get svc -n otel-demo
 kubectl get svc opentelemetry-demo-frontendproxy -n otel-demo
 ```
 
+## Configuration
+
+### Azure-Specific Helm Values
+
+An example Helm values file optimized for Azure is available at [docs/azure-values.yaml](azure-values.yaml). This file includes:
+
+- Azure LoadBalancer configuration
+- Resource limits optimized for common Azure VM sizes
+- Optional Azure Monitor integration
+- Persistent storage configuration using Azure Disks
+
+To use this values file:
+
+```bash
+helm install opentelemetry-demo open-telemetry/opentelemetry-demo \
+  --namespace otel-demo \
+  -f docs/azure-values.yaml
+```
+
 ## Additional Resources
 
 - [Azure Kubernetes Service Documentation](https://docs.microsoft.com/en-us/azure/aks/)
 - [OpenTelemetry Demo Documentation](https://opentelemetry.io/docs/demo/)
 - [Helm Charts for OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-helm-charts)
 - [Azure Container Apps Documentation](https://docs.microsoft.com/en-us/azure/container-apps/)
+- [Azure-Specific Helm Values](azure-values.yaml)
 
 ## Support
 

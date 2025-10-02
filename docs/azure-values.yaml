@@ -1,0 +1,91 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# Example Helm values file for deploying OpenTelemetry Demo on Azure Kubernetes Service (AKS)
+# 
+# Usage:
+#   helm install opentelemetry-demo open-telemetry/opentelemetry-demo \
+#     --namespace otel-demo \
+#     -f docs/azure-values.yaml
+
+# Configure frontend proxy to use Azure LoadBalancer
+frontendProxy:
+  service:
+    type: LoadBalancer
+    # Optionally specify annotations for Azure-specific features
+    # annotations:
+    #   service.beta.kubernetes.io/azure-load-balancer-internal: "false"
+    #   service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path: "/health"
+
+# Resource limits optimized for Azure Standard_D4s_v3 VMs
+# Adjust based on your node size and workload requirements
+default:
+  resources:
+    limits:
+      memory: 100Mi
+
+# Example: Configure specific services with Azure-optimized resources
+# Uncomment and adjust as needed
+# frontend:
+#   resources:
+#     limits:
+#       memory: 200Mi
+#     requests:
+#       memory: 100Mi
+#       cpu: 100m
+
+# OpenTelemetry Collector configuration
+# Uses default settings which work well on AKS
+opentelemetry-collector:
+  enabled: true
+
+# Jaeger configuration
+# Uses default settings which work well on AKS
+jaeger:
+  enabled: true
+
+# Grafana configuration
+# Uses default settings which work well on AKS
+grafana:
+  enabled: true
+
+# Prometheus configuration
+# Uses default settings which work well on AKS
+prometheus:
+  enabled: true
+
+# Optional: Enable Azure Monitor integration
+# Requires Azure Monitor workspace and proper RBAC permissions
+# Uncomment and configure if you want to send telemetry to Azure Monitor
+# components:
+#   openTelemetry:
+#     collector:
+#       config:
+#         exporters:
+#           azuremonitor:
+#             connection_string: "InstrumentationKey=YOUR_INSTRUMENTATION_KEY"
+#         service:
+#           pipelines:
+#             traces:
+#               exporters: [otlp, azuremonitor]
+#             metrics:
+#               exporters: [otlphttp/prometheus, azuremonitor]
+
+# Optional: Configure persistent storage using Azure Disks
+# Uncomment if you need persistent storage for observability backends
+# opensearch:
+#   persistence:
+#     enabled: true
+#     storageClass: "managed-premium"  # Azure Premium SSD
+#     size: 8Gi
+
+# Optional: Node affinity for specific Azure node pools
+# Uncomment if you have dedicated node pools
+# nodeSelector:
+#   agentpool: otelpool
+
+# Optional: Configure pod disruption budgets for high availability
+# components:
+#   podDisruptionBudget:
+#     enabled: true
+#     minAvailable: 1
