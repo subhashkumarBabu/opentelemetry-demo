@@ -43,6 +43,7 @@ your preferred deployment method:
 
 - [Docker](https://opentelemetry.io/docs/demo/docker_deployment/)
 - [Kubernetes](https://opentelemetry.io/docs/demo/kubernetes_deployment/)
+- [Azure (AKS)](docs/azure-deployment.md)
 
 ## Documentation
 
